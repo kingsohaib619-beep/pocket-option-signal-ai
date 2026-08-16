@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal AI — Pocket Option Market Signals</title>
+  <meta name="description" content="Modern market analysis dashboard for BUY, SELL and WAIT signals." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div>
+          <strong>Signal AI</strong>
+          <span>Market Intelligence</span>
+        </div>
+      </div>
+      <div class="live-pill"><i></i> LIVE DATA</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">POCKET OPTION SIGNAL ASSISTANT</p>
+          <h1>Trade with a <span>clear signal.</span></h1>
+          <p class="sub">Choose the pair, candle timeframe and expiry. The engine evaluates trend, momentum, volatility and price action before returning BUY, SELL or WAIT.</p>
+        </div>
+        <div class="market-status">
+          <span class="dot"></span>
+          <span id="statusText">Ready</span>
+        </div>
+      </section>
+
+      <section class="control-card">
+        <div class="control">
+          <label>Currency pair</label>
+          <select id="symbol">
+            <option>EUR/USD</option>
+            <option>GBP/USD</option>
+            <option>USD/JPY</option>
+            <option>USD/CHF</option>
+            <option>AUD/USD</option>
+            <option>USD/CAD</option>
+            <option>NZD/USD</option>
+            <option>EUR/GBP</option>
+            <option>EUR/JPY</option>
+            <option>GBP/JPY</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>Candle timeframe</label>
+          <select id="interval">
+            <option value="1min">1 Minute</option>
+            <option value="5min" selected>5 Minutes</option>
+            <option value="15min">15 Minutes</option>
+            <option value="30min">30 Minutes</option>
+            <option value="1h">1 Hour</option>
+          </select>
+        </div>
+        <div class="control">
+          <label>Trade expiry</label>
+          <select id="expiry">
+            <option value="1">1 Minute</option>
+            <option value="2">2 Minutes</option>
+            <option value="3">3 Minutes</option>
+            <option value="5" selected>5 Minutes</option>
+            <option value="10">10 Minutes</option>
+            <option value="15">15 Minutes</option>
+          </select>
+        </div>
+        <button id="analyzeBtn" class="primary-btn">Analyze market <span>→</span></button>
+      </section>
+
+      <section class="grid">
+        <div class="chart-card card">
+          <div class="card-head">
+            <div>
+              <span class="muted">PRICE ACTION</span>
+              <h2 id="chartTitle">EUR/USD · 5M</h2>
+            </div>
+            <div class="legend">
+              <span><b class="line ema9"></b> EMA 9</span>
+              <span><b class="line ema21"></b> EMA 21</span>
+              <span><b class="line ema50"></b> EMA 50</span>
+            </div>
+          </div>
+          <div id="chart"></div>
+          <div id="chartError" class="inline-error hidden"></div>
+        </div>
+
+        <aside class="signal-card card" id="signalCard">
+          <div class="signal-top">
+            <span class="muted">CURRENT SIGNAL</span>
+            <span class="confidence-badge" id="confidenceBadge">—</span>
+          </div>
+          <div class="signal-main">
+            <div class="signal-icon" id="signalIcon">—</div>
+            <div>
+              <div class="signal-label" id="signalLabel">WAIT</div>
+              <p id="signalReason">Run an analysis to evaluate the current market.</p>
+            </div>
+          </div>
+          <div class="score">
+            <div class="score-row"><span>Confidence score</span><strong id="scoreValue">—</strong></div>
+            <div class="score-track"><span id="scoreBar"></span></div>
+          </div>
+          <div class="signal-meta">
+            <div><span>Entry</span><strong id="entryTime">—</strong></div>
+            <div><span>Expiry</span><strong id="expiryTime">—</strong></div>
+            <div><span>Price</span><strong id="entryPrice">—</strong></div>
+          </div>
+          <div class="countdown-wrap">
+            <span>Signal window</span>
+            <strong id="countdown">—</strong>
+          </div>
+        </aside>
+      </section>
+
+      <section class="lower-grid">
+        <div class="card indicators-card">
+          <div class="card-head">
+            <div><span class="muted">CONFIRMATION MATRIX</span><h2>Signal factors</h2></div>
+          </div>
+          <div id="factors" class="factors"></div>
+        </div>
+
+        <div class="card methodology">
+          <span class="muted">ENGINE</span>
+          <h2>Multi-factor confirmation</h2>
+          <p>The signal engine combines EMA trend structure, RSI, MACD, Bollinger Bands, ATR volatility and recent price action. Conflicting conditions are downgraded to WAIT instead of forcing an entry.</p>
+          <div class="method-tags">
+            <span>EMA 9/21/50</span><span>RSI 14</span><span>MACD 12/26/9</span><span>BB 20/2</span><span>ATR 14</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card history-card">
+        <div class="card-head">
+          <div><span class="muted">LOCAL HISTORY</span><h2>Recent signals</h2></div>
+          <button id="clearHistory" class="ghost-btn">Clear</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Time</th><th>Pair</th><th>TF</th><th>Signal</th><th>Score</th><th>Expiry</th></tr></thead>
+            <tbody id="historyBody"><tr><td colspan="6" class="empty">No signals yet.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>Signal AI is an analysis tool, not a guarantee of profit.</span>
+      <span>Data source: configured market-data provider</span>
+    </footer>
+  </div>
+
+  <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>
